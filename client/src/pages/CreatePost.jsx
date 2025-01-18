@@ -22,46 +22,88 @@ export default function CreatePost() {
 
   const navigate = useNavigate();
 
-  const handleUpdloadImage = async () => {
+  // const handleUploadImage = async () => {
+  //   try {
+  //     if (!file) {
+  //       setImageUploadError('Please select an image');
+  //       return;
+  //     }
+  //     setImageUploadError(null);
+  //     const storage = getStorage(app);
+  //     const fileName = new Date().getTime() + '-' + file.name;
+  //     const storageRef = ref(storage, fileName);
+  //     const uploadTask = uploadBytesResumable(storageRef, file);
+  //     uploadTask.on(
+  //       'state_changed',
+  //       (snapshot) => {
+  //         const progress =
+  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //         setImageUploadProgress(progress.toFixed(0));
+  //       },
+  //       (error) => {
+  //         setImageUploadError('Image upload failed');
+  //         setImageUploadProgress(null);
+  //       },
+  //       () => {
+  //         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+  //           setImageUploadProgress(null);
+  //           setImageUploadError(null);
+  //           setFormData({ ...formData, image: downloadURL });
+  //         });
+  //       }
+  //     );
+  //   } catch (error) {
+  //     setImageUploadError('Image upload failed');
+  //     setImageUploadProgress(null);
+  //     console.log(error);
+  //   }
+  // };
+
+  const handleUploadImage = async () => {
     try {
       if (!file) {
         setImageUploadError('Please select an image');
         return;
       }
       setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + '-' + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        (error) => {
-          setImageUploadError('Image upload failed');
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
-          });
+  
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ml_default'); // Replace with your unsigned preset name
+      formData.append('folder', 'factick');
+      // formData.append('cloud_name', `${import.meta.env.VITE_CLOUD_NAME}`); // Replace with your Cloudinary cloud name
+  
+      setImageUploadProgress(0);
+  
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
         }
       );
+  
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+  
+      const data = await response.json();
+      setImageUploadProgress(100);
+      setImageUploadError(null);
+  
+      // Set the uploaded image URL in your form data
+      setFormData({ ...formData, image: data.secure_url });
     } catch (error) {
       setImageUploadError('Image upload failed');
       setImageUploadProgress(null);
-      console.log(error);
+      console.error(error);
     }
-  };
+  };  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/post/create', {
+      const res = await fetch(`${import.meta.env.VITE_PROJECT_BASE}/api/post/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +163,7 @@ export default function CreatePost() {
             gradientDuoTone='purpleToBlue'
             size='sm'
             outline
-            onClick={handleUpdloadImage}
+            onClick={handleUploadImage}
             disabled={imageUploadProgress}
           >
             {imageUploadProgress ? (
