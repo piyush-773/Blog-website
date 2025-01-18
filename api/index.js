@@ -6,15 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import postRoutes from './routes/post.route.js';
 import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
 import path from 'path';
-
-const corsOptions = {
-  origin: '*', // Allow only your frontend to make requests
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers
-  credentials: true, // Enable credentials (cookies, authorization headers)
-};
 
 dotenv.config();
 
@@ -33,7 +25,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(corsOptions));
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000!');

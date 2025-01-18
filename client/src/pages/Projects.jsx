@@ -9,5 +9,5 @@ export default function Projects() {
       </p>
       <CallToAction />
     </div>
-  );
+  )
 }

@@ -26,7 +26,7 @@ export default function Header() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_PROJECT_BASE}/api/user/signout`, {
+      const res = await fetch('/api/user/signout', {
         method: 'POST',
       });
       const data = await res.json();

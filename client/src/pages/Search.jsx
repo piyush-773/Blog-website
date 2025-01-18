@@ -36,7 +36,7 @@ export default function Search() {
     const fetchPosts = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`${import.meta.env.VITE_PROJECT_BASE}/api/post/getposts?${searchQuery}`);
+      const res = await fetch(`/api/post/getposts?${searchQuery}`);
       if (!res.ok) {
         setLoading(false);
         return;
@@ -85,7 +85,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`${import.meta.env.VITE_PROJECT_BASE}/api/post/getposts?${searchQuery}`);
+    const res = await fetch(`/api/post/getposts?${searchQuery}`);
     if (!res.ok) {
       return;
     }
@@ -130,10 +130,13 @@ export default function Search() {
               value={sidebarData.category}
               id='category'
             >
-              <option value='uncategorized'>Uncategorized</option>
-              <option value='reactjs'>React.js</option>
-              <option value='nextjs'>Next.js</option>
-              <option value='javascript'>JavaScript</option>
+            <option value='uncategorized'>Select a category</option>
+            <option value='facts'>Facts</option>
+            <option value='news'>News</option>
+            <option value='article'>Article</option>
+            <option value='motivation'>Motivation</option>
+            <option value='summary'>Summary</option>
+            <option value='knowledge'>Knowledge</option>
             </Select>
           </div>
           <Button type='submit' outline gradientDuoTone='purpleToPink'>

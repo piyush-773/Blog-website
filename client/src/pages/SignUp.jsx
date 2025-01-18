@@ -19,7 +19,7 @@ export default function SignUp() {
     try {
       setLoading(true);
       setErrorMessage(null);
-      const res = await fetch(`${import.meta.env.VITE_PROJECT_BASE}/api/auth/signup`, {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
