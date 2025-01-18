@@ -1,13 +1,6 @@
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
 import { useState } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -22,43 +15,6 @@ export default function CreatePost() {
 
   const navigate = useNavigate();
 
-  // const handleUploadImage = async () => {
-  //   try {
-  //     if (!file) {
-  //       setImageUploadError('Please select an image');
-  //       return;
-  //     }
-  //     setImageUploadError(null);
-  //     const storage = getStorage(app);
-  //     const fileName = new Date().getTime() + '-' + file.name;
-  //     const storageRef = ref(storage, fileName);
-  //     const uploadTask = uploadBytesResumable(storageRef, file);
-  //     uploadTask.on(
-  //       'state_changed',
-  //       (snapshot) => {
-  //         const progress =
-  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //         setImageUploadProgress(progress.toFixed(0));
-  //       },
-  //       (error) => {
-  //         setImageUploadError('Image upload failed');
-  //         setImageUploadProgress(null);
-  //       },
-  //       () => {
-  //         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //           setImageUploadProgress(null);
-  //           setImageUploadError(null);
-  //           setFormData({ ...formData, image: downloadURL });
-  //         });
-  //       }
-  //     );
-  //   } catch (error) {
-  //     setImageUploadError('Image upload failed');
-  //     setImageUploadProgress(null);
-  //     console.log(error);
-  //   }
-  // };
-
   const handleUploadImage = async () => {
     try {
       if (!file) {
@@ -66,15 +22,12 @@ export default function CreatePost() {
         return;
       }
       setImageUploadError(null);
-  
+
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'ml_default'); // Replace with your unsigned preset name
-      formData.append('folder', 'factick');
-      // formData.append('cloud_name', `${import.meta.env.VITE_CLOUD_NAME}`); // Replace with your Cloudinary cloud name
-  
-      setImageUploadProgress(0);
-  
+      formData.append('upload_preset', import.meta.env.VITE_CLOUD_PRESET);
+      formData.append('folder', import.meta.env.VITE_CLOUD_FOLDER);
+
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`,
         {
@@ -82,23 +35,20 @@ export default function CreatePost() {
           body: formData,
         }
       );
-  
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-  
+
       const data = await response.json();
-      setImageUploadProgress(100);
-      setImageUploadError(null);
-  
-      // Set the uploaded image URL in your form data
-      setFormData({ ...formData, image: data.secure_url });
+
+      if (response.ok) {
+        setFormData((prev) => ({ ...prev, image: data.secure_url }));
+        setImageUploadProgress(null);
+      } else {
+        throw new Error(data.error?.message || 'Image upload failed');
+      }
     } catch (error) {
-      setImageUploadError('Image upload failed');
+      setImageUploadError(error.message || 'Image upload failed');
       setImageUploadProgress(null);
-      console.error(error);
     }
-  };  
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,6 +74,7 @@ export default function CreatePost() {
       setPublishError('Something went wrong');
     }
   };
+
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
@@ -145,11 +96,9 @@ export default function CreatePost() {
             }
           >
             <option value='uncategorized'>Select a category</option>
-            <option value='motivation'>Motivation</option>
-            <option value='facts'>Facts</option>
-            <option value='knowledge'>Knowledge</option>
-            <option value='Artical'>Artical</option>
-            <option value='news'>News</option>
+            <option value='javascript'>JavaScript</option>
+            <option value='reactjs'>React.js</option>
+            <option value='nextjs'>Next.js</option>
           </Select>
         </div>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>

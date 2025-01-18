@@ -14,13 +14,12 @@ export default function Home() {
     };
     fetchPosts();
   }, []);
-
   return (
     <div>
-      <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto'>
-        <h1 className='text-3xl font-bold lg:text-6xl'>Welcome to Shiv Rana's Blog</h1>
+      <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto '>
+        <h1 className='text-3xl font-bold lg:text-6xl'>Welcome to Factick Channel</h1>
         <p className='text-gray-500 text-xs sm:text-sm'>
-          Discover a collection of articles and insights on facts, knowledge, and news from various fields. Dive in to explore topics that inform and inspire.
+        Factick is your go-to channel for a wide range of content including news, motivational insights, fascinating facts, and much more. Stay updated and inspired with our daily posts!
         </p>
         <Link
           to='/search'
@@ -29,7 +28,6 @@ export default function Home() {
           View all posts
         </Link>
       </div>
-
       <div className='p-3 bg-amber-100 dark:bg-slate-700'>
         <CallToAction />
       </div>

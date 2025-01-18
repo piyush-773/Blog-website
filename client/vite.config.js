@@ -6,7 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://factick-1.onrender.com',
+        target: 'http://localhost:3000',
+        // target: 'https://factick-1.onrender.com',
         secure: false,
       },
     },
